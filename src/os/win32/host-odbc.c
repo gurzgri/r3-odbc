@@ -837,10 +837,17 @@ RL_LIB *RL;
 
 	switch (column->sql_type)
 	{
-		case SQL_SMALLINT: case SQL_INTEGER:
+		case SQL_TINYINT:
+		case SQL_SMALLINT:
+		case SQL_INTEGER:
+		case SQL_BIGINT:
 			return RXT_INTEGER;
 
-		case SQL_NUMERIC: case SQL_REAL: case SQL_FLOAT: case SQL_DOUBLE:
+		case SQL_NUMERIC:
+		case SQL_REAL:
+		case SQL_FLOAT:
+		case SQL_DOUBLE:
+		case SQL_DECIMAL:
 			return RXT_DECIMAL;
 
 		case SQL_TYPE_DATE:
@@ -848,18 +855,38 @@ RL_LIB *RL;
 			column->value.int32a = (date->year << 16) | (date->month << 12) | (date->day << 7);
 			return RXT_DATE;
 
+		/*
 		case SQL_TYPE_TIME:
 			time = (TIME_STRUCT *)column->buffer;
 			column->value.int64 = (time->hour * 3.6e12) + (time->minute * 6e10) + (time->second * 1e9);
 			return RXT_TIME;
 
+		case SQL_TYPE_TIMESTAMP:
+			date = (DATE_STRUCT *)column->buffer;
+			column->value.int32a = 0; //(date->year << 16) | (date->month << 12) | (date->day << 7);
+			return RXT_DATE;
+		*/
+
 		case SQL_BIT:
 			return RXT_LOGIC;
 
-		case SQL_BINARY: case SQL_VARBINARY: case SQL_LONGVARBINARY:
+		case SQL_BINARY:
+		case SQL_VARBINARY:
+		case SQL_LONGVARBINARY:
 			column->value.series = (REBSER *)ODBC_SqlBinaryToBinary((char *)column->buffer, column->buffer_length);
 			column->value.index  = 0;
 			return RXT_BINARY;
+
+		case SQL_CHAR:
+		case SQL_VARCHAR:
+		case SQL_LONGVARCHAR:
+		case SQL_WCHAR:
+		case SQL_WVARCHAR:
+		case SQL_WLONGVARCHAR:
+		case SQL_GUID:
+			column->value.series = (REBSER *)ODBC_SqlWCharToString((SQLWCHAR *)column->buffer);
+			column->value.index  = 0;
+			return RXT_STRING;
 
 		default:
 			column->value.series = (REBSER *)ODBC_SqlWCharToString((SQLWCHAR *)column->buffer);
