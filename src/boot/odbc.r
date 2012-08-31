@@ -74,13 +74,16 @@ sys/make-scheme [
         ;   or a DSN-less datasource string (block syntax).
         ;
         open: funct [port [port!]] [
-        ;   target = "driver={intersystems odbc};server=192.168.5.65;port=1972;database=book;uid=cuadmin;pwd=cuadmin;"
 
-            connection:
-            port/locals: make database-prototype []
-            port/state:  context [access: 'write commit: 'auto]                 ;defaults
+            port/state:  context [access: 'write commit: 'auto] ;defaults
 
-            result: open-connection connection either port/spec/host [join "dsn=" port/spec/host] [port/spec/target]
+            port/locals: make database-prototype [] case [
+                string? host:   select port/spec 'host   ajoin ["dsn=" host]
+                string? target: select port/spec 'target target
+                /else cause-error 'access 'invalid-spec port/spec
+            ]
+
+            result: open-connection port/locals
 
             all [block? result lit-word? first result apply :cause-error result]    ; not a nice way to return an error from a command ...
 
