@@ -832,6 +832,7 @@ RL_LIB *RL;
 {
 	TIME_STRUCT *time;
 	DATE_STRUCT *date;
+	TIMESTAMP_STRUCT *datetime;
 
 	if (column->buffer_length == SQL_NULL_DATA) return RXT_NONE;
 
@@ -855,17 +856,16 @@ RL_LIB *RL;
 			column->value.int32a = (date->year << 16) | (date->month << 12) | (date->day << 7);
 			return RXT_DATE;
 
-		/*
 		case SQL_TYPE_TIME:
 			time = (TIME_STRUCT *)column->buffer;
 			column->value.int64 = (time->hour * 3.6e12) + (time->minute * 6e10) + (time->second * 1e9);
 			return RXT_TIME;
 
-		case SQL_TYPE_TIMESTAMP:
-			date = (DATE_STRUCT *)column->buffer;
-			column->value.int32a = 0; //(date->year << 16) | (date->month << 12) | (date->day << 7);
-			return RXT_DATE;
-		*/
+		//case SQL_TYPE_TIMESTAMP:
+		//	datetime = (TIMESTAMP_STRUCT *)column->buffer;
+		//  column->value.int64 = (10 * 3.6e12) + (30 * 6e10) + (15 * 1e9);
+		//  column->value.int32a = (2012 << 16) | (8 << 12) | (31 << 7);
+		//  return RXT_TIME;
 
 		case SQL_BIT:
 			return RXT_LOGIC;

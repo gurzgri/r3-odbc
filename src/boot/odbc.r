@@ -76,14 +76,16 @@ sys/make-scheme [
         open: funct [port [port!]] [
 
             port/state:  context [access: 'write commit: 'auto] ;defaults
+            port/locals: make database-prototype []
 
-            port/locals: make database-prototype [] case [
-                string? host:   select port/spec 'host   ajoin ["dsn=" host]
-                string? target: select port/spec 'target target
-                /else cause-error 'access 'invalid-spec port/spec
+            spec: any [
+                if string? spec: select port/spec 'target [spec]
+                if string? spec: select port/spec 'host   [ajoin ["dsn=" spec]]
+
+                cause-error 'access 'invalid-spec port/spec
             ]
 
-            result: open-connection port/locals
+            result: open-connection port/locals spec
 
             all [block? result lit-word? first result apply :cause-error result]    ; not a nice way to return an error from a command ...
 
@@ -159,7 +161,10 @@ sys/make-scheme [
         ;--------------------------------------------------------------- copy --
         ;
         copy: func [port [port!]] [
-            copy-odbc port/locals
+            result: copy-odbc port/locals
+
+            all [block? result lit-word? first result apply :cause-error result]    ; not a nice way to return an error from a command ...
+            result
         ]
     ]
 ]

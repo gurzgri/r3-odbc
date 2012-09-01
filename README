@@ -1,19 +1,14 @@
-REBOL3 ODBC Extension
+Introduction
+============
 
-    Version: 0.6.0
-    Date:    24-01-2011
-    Author:  Christian Ensel
-
-
-=== Introduction
-
---- About
+About
+-----
 
 The R3 ODBC Extension allows easy access to databases and data sources supporting ODBC.
 
-The extension supports SQL statements <b>select</b> and <b>insert</b>, <b>update</b> and <b>delete</b>
-as well as <b>catalog</b> functions for tables, columns and types. It supports <b>statement parameters</b>
-and is Unicode aware. It supports <b>direct and prepared execution</b> of statements.
+The extension supports SQL statements **select** and **insert**, **update** and **delete**
+as well as **catalog** functions for tables, columns and types. It supports **statement parameters**
+and is Unicode aware. It supports **direct and prepared execution** of statements.
 
 If you're used to the commercial REBOL/Command (or the nowadays freely available REBOL/View) ODBC database access methods,
 you should have no problems using the R3 ODBC extension, there's next to no differences in functionality.
@@ -21,9 +16,10 @@ you should have no problems using the R3 ODBC extension, there's next to no diff
 The ODBC extension is available as a DLL for the Windows platform. So far it has been tested with MySQL, PostgreSQL and
 Intersystems Caché as well as the Microsoft Text Driver. Of course it's supposed to work with any ODBC data source.
 
---- Installation
+Installation
+------------
 
-Download the <a href="odbc.dll">odbc.dll</a> to a place where your <b>r3.exe</b> can access it.
+Download the <a href="odbc.dll">odbc.dll</a> to a place where your **r3.exe** can access it.
 Then just import the DLL with
 
     >> import %odbc.dll
@@ -32,11 +28,13 @@ In case you experience problems with character sets, try using the DLL with a ho
 to get a proper unicode console.
 
 
-=== Database Connections
+Database Connections
+====================
 
---- Opening Connections
+Opening Connections
+-------------------
 
-If a data source has been set up in the systems ODBC panel, <b>open</b>ing a connection is as easy as
+If a data source has been set up in the systems ODBC panel, **open**ing a connection is as easy as
 
     >> connection: open odbc://datasource-name
 
@@ -46,10 +44,11 @@ To connect to a database using a connection string, use
 
 with a target string tailored to the specific requirements of the database engine you're using.
 
---- Opening Statements
+Opening Statements
+------------------
 
 After you've successfully connected to the database, you have to allocate one or more statement handles
-via the <b>first</b> function:
+via the **first** function:
 
     >> db: first connection
 
@@ -61,7 +60,8 @@ You may allocate multiple statements on the same database connection:
 
 There are benefits in using multiple statements for specialised purposes depending on your usage patterns, see the section on statement preparation below.
 
---- Closing Statements and Connections
+Closing Statements and Connections
+----------------------------------
 
 To close only a statement, do
 
@@ -72,9 +72,11 @@ To close a connection along with all associated statements do
     >> close connection
 
 
-=== SQL Statements
+SQL Statements
+==============
 
---- Inserting Statements, retrieving results
+Inserting Statements, retrieving results
+----------------------------------------
 
 The following examples should give an (informal) idea on how SQL statements are executed. Here's is a trivial SELECT statement:
 
@@ -117,10 +119,11 @@ A DELETE statement deleting five rows:
     == 5
 
 
---- Affected rows
+Affected rows
+-------------
 
-With row-changing INSERT/UPDATE/DELETE statements, <b>insert</b> simply returns <b>true</b>, if the statement has been executed successfully.
-On <b>copy</b> you retrieve the number of rows affected by the statement:
+With row-changing INSERT/UPDATE/DELETE statements, **insert** simply returns **true**, if the statement has been executed successfully.
+On **copy** you retrieve the number of rows affected by the statement:
 
     >> insert db ["insert into Persons (Name, Age) values (?, ?)" person/name person/age]
     == true
@@ -128,9 +131,10 @@ On <b>copy</b> you retrieve the number of rows affected by the statement:
     == 1
 
 
---- Column names
+Column names
+------------
 
-For SELECT statements and catalog functions (see below) <b>insert</b> returns a block of column names as REBOL words, while <b>copy</b> retrieves
+For SELECT statements and catalog functions (see below) **insert** returns a block of column names as REBOL words, while **copy** retrieves
 the actual results of the statement.
 
 Using the column names returned it's easy to keep your rebol code in sync with your SQL statements:
@@ -178,17 +182,18 @@ Some examples:
     REBOL words: id first-name is-valid camel-case-abc odbc-test table-id expr-1 a1b2
 
 
---- Prepared Statements
+Prepared Statements
+-------------------
 
 Often, you'll find yourself executing the same SQL statements again and again. The ODBC extension supports this
 by preparing statements for later reuse (i.e. execution), which saves the ODBC driver and your database the effort
 to parse the SQL and to determine an access plan every single time. Instead, a previously prepared statement is reused and no
 statement string needs to be transfered to the database.
 
-To prepare a statements, just <b>insert</b> a SQL string, likely along with parameter markers <b>?</b> and parameters.
-If later you <b>insert</b> the same SQL string along with that statement, internaly the statement is only excecuted, not prepared again.
+To prepare a statements, just **insert** a SQL string, likely along with parameter markers **?** and parameters.
+If later you **insert** the same SQL string along with that statement, internaly the statement is only excecuted, not prepared again.
 
-Successive calls to <b>insert</b> then supply the same SQL, paramaters, however, may of course differ:
+Successive calls to **insert** then supply the same SQL, paramaters, however, may of course differ:
 
     >> db: first database: open odbc://mydatabase
     >> sql: "select * from Table where Value = ?"
@@ -212,9 +217,10 @@ Whether a SQL string supplied needs to be prepared before execution or wheter it
 
 
 
---- Flatten Function
+Flatten Function
+----------------
 
-Sometimes you may want to retrieve results as flat values instead of record blocks. You can do so with <bBflatten</b>:
+Sometimes you may want to retrieve results as flat values instead of record blocks. You can do so with <bBflatten**:
 
     >> insert db "select * from cinema.show" copy db
     == [[1 1 12:00 7]
@@ -227,7 +233,7 @@ Sometimes you may want to retrieve results as flat values instead of record bloc
         8 8 1 19:55 8 9 1 12:25 9 10 1 14:55 9 11 1 17:25 9 12 1 19:55 9 13 2 12:1 0 3 14
         2 14:30 3 15 2 16:50 3 16 2 19:10 3 17 2 21:30 3 18 2 12:05 4 19 2 14:25 4 20 ...
 
-The <b>flatten</b> function comes along with the ODBC extension but may prove generally useful in other situations, too:
+The **flatten** function comes along with the ODBC extension but may prove generally useful in other situations, too:
 
     >> flatten [1 2 3 4 5]
     == [1 2 3 4 5]
@@ -237,10 +243,11 @@ The <b>flatten</b> function comes along with the ODBC extension but may prove ge
     == [1 2 3 4 5]
 
 
---- Statement Parameters
+Statement Parameters
+--------------------
 
 You may already have noticed the use of statement parameters. To use them, instead of just supplying a statement string supply
-a block to <b>insert</b>. The statement string has to be the first item in the block, let parameters follow as applicable:
+a block to **insert**. The statement string has to be the first item in the block, let parameters follow as applicable:
 
     >> insert db ["select ? from Sample.Table where ID = ?" "Test" 2]
     >> copy db
@@ -255,22 +262,23 @@ Note that the block supplied will be reduced automatically:
 
 The datatypes supported so far are:
 
-*integer!
+- integer!
 
-*decimal!
+- decimal!
 
-*logic!
+- logic!
 
-*time!
+- time!
 
-*date! (currently as strings only, waiting for a108 to implement this)
+- date! (only dates, not combined date/time values, I don't think the host-kit supports this)
 
-*string!
+- string!
 
-*binary!
+- binary!
 
 
---- Datatype Conversions
+Datatype Conversions
+--------------------
 
 If the built in automatic type conversion for data retrieval doesn't fit your needs, you may cast values to different types
 in your SQL statement:
@@ -290,9 +298,10 @@ Statement parameters inserted into the result columns will always be returned as
 If there is no applicable REBOL datatype to contain a SQL value, the value will be returned as a string.
 
 
---- Catalog functions
+Catalog functions
+-----------------
 
-+++ Tables
+### Tables
 
 To learn about the tables in a database, you can
 
@@ -305,9 +314,9 @@ The general dialect syntax is:
 
     >> insert db ['tables <table-name> <schema-name> <catalog-name> <table-type>]
 
-The <b>'tables</b> lit-word returns the tables asked for as a result set.
+The **'tables** lit-word returns the tables asked for as a result set.
 
-+++ Columns
+### Columns
 
 To learn about the columns of your databases' tables, do
 
@@ -320,18 +329,19 @@ The general dialect for column retrieval is:
 
     do-sql statement ['tables <table-name> <column-name> <schema-name> <catalog-name>]
 
-The <b>'columns</b> lit-word returns the columns asked for as a result set.
+The **'columns** lit-word returns the columns asked for as a result set.
 
-+++ Types
+### Types
 
 To learn about the datatypes supported by the data source, use
 
     >> insert db ['types]
 
-The <b>'types</b> lit-word returns the datatypes supported by the connected data source as a result set.
+The **'types** lit-word returns the datatypes supported by the connected data source as a result set.
 
 
-=== License
+License
+=======
 
 Author: Christian Ensel
 
