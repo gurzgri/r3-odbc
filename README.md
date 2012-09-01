@@ -19,7 +19,7 @@ Intersystems Caché as well as the Microsoft Text Driver. Of course it's suppose
 Installation
 ------------
 
-Download the <a href="odbc.dll">odbc.dll</a> to a place where your **r3.exe** can access it.
+Download the <a href="r3-odbc/blob/master/lib/odbc.dll">odbc.dll</a> to a place where your **r3.exe** can access it.
 Then just import the DLL with
 
     >> import %odbc.dll
@@ -168,13 +168,13 @@ There is some "magic" involved which transforms names to adhere to REBOL standar
 
 The rules are fairly simple:
 
-*"ABc" becomes 'a-bc,
+- "ABc" becomes 'a-bc,
 
-*"aB" becomes 'a-b,
+- "aB" becomes 'a-b,
 
-*the underscore "_" is replaced with a hyphen '-
+- the underscore "_" is replaced with a hyphen '-
 
-*all uppercase letters are converted to lowercase
+- all uppercase letters are converted to lowercase
 
 Some examples:
 
@@ -220,7 +220,7 @@ Whether a SQL string supplied needs to be prepared before execution or wheter it
 Flatten Function
 ----------------
 
-Sometimes you may want to retrieve results as flat values instead of record blocks. You can do so with <bBflatten**:
+Sometimes you may want to retrieve results as flat values instead of record blocks. You can do so with **flatten**:
 
     >> insert db "select * from cinema.show" copy db
     == [[1 1 12:00 7]
@@ -345,7 +345,7 @@ License
 
 Author: Christian Ensel
 
-Rights: Copyright (C) Christian Ensel 2010-2011
+Rights: Copyright (C) Christian Ensel 2010-2012
 
 This software is provided 'as-is', without any express or implied warranty.
 In no event will the author be held liable for any damages arising from the
