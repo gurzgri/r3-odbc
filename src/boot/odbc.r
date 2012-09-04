@@ -158,7 +158,7 @@ sys/make-scheme [
 
         ;--------------------------------------------------------------- copy --
         ;
-        copy: func [port [port!]] [
+        copy: funct [port [port!]] [
             result: copy-odbc port/locals
 
             all [block? result lit-word? first result apply :cause-error result]    ; not a nice way to return an error from a command ...
