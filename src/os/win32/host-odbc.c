@@ -272,11 +272,11 @@ RL_LIB *RL;
 *******************************************************************************/
 {
 	int length = lstrlenW(source), s, t = 0;
-	WCHAR *hyphen = L"-", *underscore = L"_";
+	WCHAR *hyphen = L"-", *underscore = L"_", *space = L" ";
 
 	for (s = 0; s < length; s++)
 	{
-		target[t++] = (source[s] == *underscore) ? *hyphen : towlower(source[s]);
+		target[t++] = (source[s] == *underscore || source[s] == *space) ? *hyphen : towlower(source[s]);
 
 		if (
 			(s < length - 2 && iswupper(source[s]) && iswupper(source[s + 1]) && iswlower(source[s + 2])) ||
@@ -785,6 +785,13 @@ RL_LIB *RL;
 				if (buffer == NULL) return MAKE_ERROR(L"Couldn't allocate time struct buffer!");
 				break;
 
+		//	case SQL_TYPE_TIMESTAMP:
+		//		c_type      = SQL_C_TYPE_TIMESTAMP;
+		//		buffer_size = sizeof(TIMESTAMP_STRUCT);
+		//		buffer      = malloc(buffer_size);
+		//		if (buffer == NULL) return MAKE_ERROR(L"Couldn't allocate timestamp struct buffer!");
+		//		break;
+
 			case SQL_BIT:
 				c_type      = SQL_C_BIT;
 				buffer      = (char *)&column->value.int64;
@@ -832,7 +839,7 @@ RL_LIB *RL;
 {
 	TIME_STRUCT *time;
 	DATE_STRUCT *date;
-	TIMESTAMP_STRUCT *datetime;
+	TIMESTAMP_STRUCT *timestamp;
 
 	if (column->buffer_length == SQL_NULL_DATA) return RXT_NONE;
 
@@ -861,11 +868,11 @@ RL_LIB *RL;
 			column->value.int64 = (time->hour * 3.6e12) + (time->minute * 6e10) + (time->second * 1e9);
 			return RXT_TIME;
 
-		//case SQL_TYPE_TIMESTAMP:
-		//	datetime = (TIMESTAMP_STRUCT *)column->buffer;
-		//  column->value.int64 = (10 * 3.6e12) + (30 * 6e10) + (15 * 1e9);
-		//  column->value.int32a = (2012 << 16) | (8 << 12) | (31 << 7);
-		//  return RXT_TIME;
+	//	case SQL_TYPE_TIMESTAMP:
+	//		timestamp = (TIMESTAMP_STRUCT *)column->buffer;
+	//		column->value.int64 = (10 * 3.6e12) + (30 * 6e10) + (15 * 1e9);
+	//		column->value.int32a = (2012 << 16) | (8 << 12) | (31 << 7);
+	//		return RXT_DATE; // RXT_DATE || RXT_TIME
 
 		case SQL_BIT:
 			return RXT_LOGIC;

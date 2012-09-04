@@ -78,14 +78,12 @@ sys/make-scheme [
             port/state:  context [access: 'write commit: 'auto] ;defaults
             port/locals: make database-prototype []
 
-            spec: any [
-                if string? spec: select port/spec 'target [spec]
-                if string? spec: select port/spec 'host   [ajoin ["dsn=" spec]]
+            result: open-connection port/locals case [
+                string? spec: select port/spec 'target [spec]
+                string? spec: select port/spec 'host   [ajoin ["dsn=" spec]]
 
                 cause-error 'access 'invalid-spec port/spec
             ]
-
-            result: open-connection port/locals spec
 
             all [block? result lit-word? first result apply :cause-error result]    ; not a nice way to return an error from a command ...
 

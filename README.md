@@ -172,7 +172,7 @@ The rules are fairly simple:
 
 - "aB" becomes 'a-b,
 
-- the underscore "_" is replaced with a hyphen '-
+- underscores "_" and spaces " " are replaced with hyphens '-
 
 - all uppercase letters are converted to lowercase
 
