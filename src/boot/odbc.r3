@@ -42,7 +42,7 @@ export flatten:  command [block [block!] /deep]
 open-connection: command [connection [object!] spec      [string!]]
 open-statement:  command [connection [object!] statement [object!]]
 insert-odbc:     command [statement  [object!] sql [block!]]
-copy-odbc:       command [statement  [object!]]
+copy-odbc:       command [statement  [object!] length [integer!]]
 close-odbc:      command [connection [object! none!] statement [object! none!]]
 update-odbc:     command [connection [object!] access [logic!] commit [logic!]]
 
@@ -157,8 +157,8 @@ sys/make-scheme [
 
         ;--------------------------------------------------------------- copy --
         ;
-        copy: funct [port [port!]] [
-            result: copy-odbc port/locals
+        copy: funct [port [port!] /part length [number!]] [
+            result: copy-odbc port/locals any [length 0]
 
             all [block? result lit-word? first result apply :cause-error result]    ; not a nice way to return an error from a command ...
             result

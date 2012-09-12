@@ -1120,8 +1120,10 @@ RL_LIB *RL;
 	SQLULEN      row;
 	SQLRETURN    rc;
 	int          rebol_type;
+	i32			 num_rows, i;
 
-	object  = RXA_OBJECT(frm, 1); // statement object
+	object   = RXA_OBJECT(frm, 1); // statement object
+	num_rows = RXA_INT32( frm, 2);
 
 	hstmt   = (SQLHSTMT*)(RL_GET_FIELD(object, RL_MAP_WORD("statement"), &value) == RXT_HANDLE) ? value.addr : NULL;
 	columns = (COLUMN  *)(RL_GET_FIELD(object, RL_MAP_WORD("columns"),   &value) == RXT_HANDLE) ? value.addr : NULL;
@@ -1135,7 +1137,10 @@ RL_LIB *RL;
 	rc = SQLNumResultCols(hstmt, &num_columns);
 	if (rc != SQL_SUCCESS && rc != SQL_SUCCESS_WITH_INFO) return ODBC_ReturnError(frm, SQL_HANDLE_STMT, hstmt);
 
-	while (SQLFetch(hstmt) != SQL_NO_DATA)                                      // Fetch columns
+	if (num_rows == 0) num_rows = -1;
+	row = 0;
+
+	while ((row != num_rows) && (SQLFetch(hstmt) != SQL_NO_DATA))  // Fetch columns
 	{
 		record = RL_MAKE_BLOCK(num_columns);
 		if (record == NULL) return MAKE_ERROR(L"Couldn't allocate record block!");

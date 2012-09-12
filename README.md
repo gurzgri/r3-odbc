@@ -131,6 +131,43 @@ On **copy** you retrieve the number of rows affected by the statement:
     == 1
 
 
+Retrieving result sets
+----------------------
+
+With SELECT statements, **insert** returns a block of column names as REBOL words (see below), on **copy** you retrieve the actual rows:
+
+    >> insert db ["select LastName, FirstName from persons"]
+    == [last-name first-name]
+    >> copy db
+    == [
+        ["Acre" "Anton"]
+        ["Bender" "Bill"]
+        ...
+
+When you have to work with large result sets, you may want to retrieve results in portions of *n* rows a time using refined **copy/part**:
+
+    >> insert db ["select LastName, FirstName from persons"]
+    == [last-name first-name]
+    >> copy/part db 2
+    == [
+        ["Anderson" "Anton"]
+        ["Brown" "Bill"]
+    ]
+    >> copy/part db 2
+    == [
+        ["Clark" "Christopher"]
+        ["Denver" "Dick"]
+    ]
+    >> copy/part db 2
+    == [
+        ["Evans" "Endo"]
+        ["Flores" "Fridolin"]
+    ]
+    >> ..
+
+
+
+
 Column names
 ------------
 
