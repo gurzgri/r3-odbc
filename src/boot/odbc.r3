@@ -38,7 +38,6 @@ REBOL [
 ]
 
 export flatten:  command [block [block!] /deep]
-export fail:     command []
 
 open-connection: command [connection [object!] spec      [string!]]
 open-statement:  command [connection [object!] statement [object!]]
